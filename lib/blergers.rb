@@ -9,11 +9,19 @@ module Blergers
   class Post < ActiveRecord::Base
     has_many :post_tags
     has_many :tags, through: :post_tags
+
+    def self.page(page_num)
+      self.order(date: :desc).limit(10).offset(page_num*10)
+    end
   end
 
   class Tag < ActiveRecord::Base
     has_many :post_tags
     has_many :posts, through: :post_tags
+
+    def self.top_tags
+      Blergers::Tag.group(:name).uniq.count
+    end
   end
 
   class PostTag < ActiveRecord::Base
@@ -40,7 +48,9 @@ def run!
   toy.import
   toy.posts.each do |post|
     add_post!(post)
+     
   end
 end
 
 binding.pry
+#binding.pry
